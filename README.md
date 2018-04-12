@@ -3,4 +3,41 @@ This is a repo to store all relevant documents to my senior research project on 
 
 ## Results:
 
-'<table border="1" class="dataframe">\n  <thead>\n    <tr style="text-align: right;">\n      <th></th>\n      <th>accuracy</th>\n      <th>recall</th>\n      <th>precision</th>\n      <th>f-score</th>\n      <th>time</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>initial</th>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>5.683912</td>\n    </tr>\n    <tr>\n      <th>remade</th>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>2.667588</td>\n    </tr>\n    <tr>\n      <th>updated</th>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>1.0</td>\n      <td>50.633219</td>\n    </tr>\n  </tbody>\n</table>'
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>accuracy</th>
+      <th>recall</th>
+      <th>precision</th>
+      <th>f-score</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>initial</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>5.683912</td>
+    </tr>
+    <tr>
+      <th>remade</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.667588</td>
+    </tr>
+    <tr>
+      <th>updated</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>50.633219</td>
+    </tr>
+  </tbody>
+</table>
