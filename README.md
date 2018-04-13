@@ -1,43 +1,9 @@
-# senior_research
-This is a repo to store all relevant documents to my senior research project on the addition of data to decision trees after their initial training, and the impact thereof
+# Post-train Data Addition to Decision Trees in Python
+### Jeremy Swerdlow
+This is a repo to store all relevant documents to my senior research project on the addition of data to decision trees after their initial training, and the impact thereof.
 
-## Results:
+While this work is still in progress, the core code is close to complete. It all functions, now just requires tweaking for neatness and comments. 
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>accuracy</th>
-      <th>recall</th>
-      <th>precision</th>
-      <th>f-score</th>
-      <th>time</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>initial</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>5.683912</td>
-    </tr>
-    <tr>
-      <th>remade</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>2.667588</td>
-    </tr>
-    <tr>
-      <th>updated</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>50.633219</td>
-    </tr>
-  </tbody>
-</table>
+To run the sample code, please use the .ipynb file.
+
+If you have any questions, please email Jeremy Swerdlow at [jjswerd14@earlham.edu](mailto:jjswerd14@earlham.edu)
