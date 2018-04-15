@@ -1,9 +1,8 @@
 '''
 tree.py: package containing methods related to the creation, editing, and
     editing of decision trees for the post-train data addition senior research
-    
-author: Jeremy Swerdlow
 
+author: Jeremy Swerdlow
 '''
 
 ''' ---------- imports ---------- '''
@@ -35,11 +34,11 @@ class InvalidPercentError(Exception):
 class TreeNode:
     '''
     TreeNode - class definition for the nodes of the decision tree
-        stores: 
+        stores:
             - the decision
             - the pd dataframe at that decision
             - the target column name
-            - the children nodes as values of dictionary 
+            - the children nodes as values of dictionary
                 where key is the split attribute
     '''
     def __init__(self, decision, df, target, rem_attributes):
@@ -58,7 +57,7 @@ def print_tree(tree_obj):
         if not isinstance(tree_obj, string_types):
             for k, v in tree_obj.children.items():
                 if isinstance(v, string_types):
-                    print(tab_delim * tab_cnt, 
+                    print(tab_delim * tab_cnt,
                           tree_obj.decision, ' = ', k, ': ', v)
                 else:
                     print(tab_delim * tab_cnt, tree_obj.decision, ' = ', k)
@@ -73,12 +72,15 @@ def print_tree(tree_obj):
 ''' ---------- Methods used to create most_gain evaluation fxn ---------- '''
 
 def entropy(col):
+    '''
+    entropy - function to calculate the entropy of a pandas series (df column)
+    '''
     def _entropy(val):
         if val == 0:
             return 0
         else:
             return val * m.log(val, 2)
-        
+
     vals = list(col.value_counts())
     total = len(col)
     vals = list(map(lambda x: x/total, vals))
@@ -86,9 +88,15 @@ def entropy(col):
     return -1 * sum(vals)
 
 def calculate_probability(df, attribute, v):
+    '''
+    calculate_probability - calculates how likely each value is to appear
+    '''
     return len(df[df[attribute] == v]) / len(df)
-    
+
 def remainder(df, attribute, targ_attr):
+    '''
+    remainder - function to calculate the remainder for an attribute
+    '''
     rem = 0
     for v in df[attribute].unique():
         v_p = calculate_probability(df, attribute, v)
@@ -97,9 +105,17 @@ def remainder(df, attribute, targ_attr):
     return rem
 
 def gain(df, attribute, targ_attr):
+    '''
+    gain - function which calculates the information gain of a specific
+        attribute from the dataframe
+    '''
     return entropy(df[targ_attr]) - remainder(df, attribute, targ_attr)
 
 def most_gain(df, attributes, targ_attr):
+    '''
+    most_gain - function to calculate which attribute provides the most_gain
+        information gain from those left in the dataframe.
+    '''
     best_attr = attributes[0]
     best_gain = 0
     for a in attributes:
@@ -122,7 +138,7 @@ def majority_val(df, targ_attr):
 
 '''---------- create_decision_tree method ----------'''
 
-def create_decision_tree(df, attributes, targ_attr, parent_df, 
+def create_decision_tree(df, attributes, targ_attr, parent_df,
                          eval_fxn=most_gain, est_fxn=majority_val):
     '''
     create_decision_tree - function to create a decision tree based on
@@ -143,8 +159,8 @@ def create_decision_tree(df, attributes, targ_attr, parent_df,
         node = TreeNode(decision, df, targ_attr, rem_attributes)
         for val in df[decision].unique():
             exs = df[df[decision] == val]
-            node.children[val] = create_decision_tree(exs, rem_attributes, 
-                                                      targ_attr, df, 
+            node.children[val] = create_decision_tree(exs, rem_attributes,
+                                                      targ_attr, df,
                                                       eval_fxn=eval_fxn,
                                                       est_fxn=est_fxn)
         return node
@@ -163,15 +179,15 @@ def make_decision(df, tree, est_fxn=majority_val, verbose=True):
         if isinstance(tree, string_types):
             return tree
         elif row[tree.decision] in tree.children.keys():
-            return _make_decision(row, 
-                                  tree.children[row[tree.decision]], 
+            return _make_decision(row,
+                                  tree.children[row[tree.decision]],
                                   est_fxn=est_fxn)
         else:
             return est_fxn(tree.df, tree.target)
     results = []
     for _, row in df.iterrows():
         results.append(_make_decision(row, tree, est_fxn=est_fxn))
-    
+
     if verbose:
         df['results'] = results
         return df
@@ -198,22 +214,26 @@ def add_new_data(df, tree, eval_fxn=most_gain, est_fxn=majority_val, copy=False)
                 else:
                     # see if there's a new way to split data further
                     exs = tree.df[tree.df[dec] == row[dec]]
-                    tree.children[row[dec]] = create_decision_tree(exs, tree.attributes_left,
-                                                                   tree.target, tree.df,
+                    tree.children[row[dec]] = create_decision_tree(exs,
+                                                                   tree.attributes_left,
+                                                                   tree.target,
+                                                                   tree.df,
                                                                    eval_fxn=eval_fxn,
                                                                    est_fxn=est_fxn)
             else:
                 # recurse to child
-                tree.children[row[dec]] = add_new_row(row, tree.children[row[dec]], 
-                                                      eval_fxn=eval_fxn, est_fxn=est_fxn)
+                tree.children[row[dec]] = add_new_row(row,
+                                                      tree.children[row[dec]],
+                                                      eval_fxn=eval_fxn,
+                                                      est_fxn=est_fxn)
         else:
             # only one child, set its value as target
             tree.children[row[dec]] = row[tree.target]
         return tree
-    
+
     if copy:
         tree = deepcopy(tree)
-    
+
     if len(df.columns) != len(tree.df.columns):
         raise DifferentColumnsError('new data has fewer columns than TreeNode.df')
     if not all(df.columns == tree.df.columns):
@@ -221,7 +241,7 @@ def add_new_data(df, tree, eval_fxn=most_gain, est_fxn=majority_val, copy=False)
 
     for _, row in df.iterrows():
         tree = add_new_row(row, tree, eval_fxn=most_gain, est_fxn=majority_val)
-        
+
     return tree
 
 ''' ---------- end add_new_data method ---------- '''
@@ -230,6 +250,10 @@ def add_new_data(df, tree, eval_fxn=most_gain, est_fxn=majority_val, copy=False)
 '''---------- drop_non_categorical method ----------'''
 
 def drop_non_categorical(df):
+    '''
+    drop_non_categorical - function to remove all non-categorical attributes to
+        a dataframe, allowing for easier testing of this decision tree method
+    '''
     for col in df.columns.tolist():
         if df[col].dtype in [int, float, complex]:
             df = df.drop(col, axis=1)

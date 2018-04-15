@@ -1,9 +1,8 @@
 '''
 testing.py: package containing necessary methods for testing add_new_data
     method for post-train data addition senior research
-    
-author: Jeremy Swerdlow
 
+author: Jeremy Swerdlow
 '''
 
 ''' ---------- imports ---------- '''
@@ -27,6 +26,10 @@ mushroom_df = dp.mushroom(tree=False, graph=False)
 ''' ---------- general testing methods ---------- '''
 
 def metric_test(tree, df):
+    '''
+    metric_test - function to calculate the accuracy, recall, precision and
+        f-score of a decision tree based on testing data in the df.
+    '''
     tot = df.shape[0]
     tp = fp = tn = fn = 0
     pos, neg = tree.df[tree.target].unique().tolist()
@@ -49,12 +52,21 @@ def metric_test(tree, df):
     return a, r, p, f
 
 def random_split_data(df, trn_pct, trn2_pct, tst_pct):
+    '''
+    random_split_data - function to randomly split a dataframe into 3 portions:
+        train, post-train, and test.
+    '''
     df_len = df.shape[0]
     if trn_pct + trn2_pct + tst_pct > 1:
         raise(InvalidPercentError, "trn, trn2, and tst must total less than 1.")
-    return np.split(df.sample(frac=1), [int(trn_pct*df_len), int((trn2_pct + trn_pct)*df_len)])
+    return np.split(df.sample(frac=1),
+                    [int(trn_pct * df_len), int((trn2_pct + trn_pct) * df_len)])
 
 def df_from_results(test_res, time_dict, ttl):
+    '''
+    df_from_results - function to turn metric_test results into single pandas
+        for title
+    '''
     df = pd.DataFrame({k:v[ttl] for k, v in test_res.items()},
                       index=['accuracy', 'recall', 'precision', 'f-score']).T
     df['time'] = pd.DataFrame(time_dict).loc[ttl]
@@ -66,7 +78,10 @@ def df_from_results(test_res, time_dict, ttl):
 ''' ---------- random testing methods ---------- '''
 
 def random_split_run():
-    df_lbl_dict = {'pets':(pet_df, 'iscat'), 
+    '''
+    random_split_run - function to run to test method on randomly split datasets
+    '''
+    df_lbl_dict = {'pets':(pet_df, 'iscat'),
                    'five_day':(fv_day_df, 'cats or dogs'),
                    'five_day_2':(fv_day_2nd_df, 'cats_or_dogs'),
                    'mushroom':(mushroom_df, 'class')}
@@ -114,7 +129,7 @@ def random_split_run():
         # test it against metrics
         a, r, p, f = metric_test(recreated_tree, tst)
         test_res['remade'][ttl] = [a, r, p, f]
-    
+
     return time_dict, test_res
 
 ''' ---------- end random testing methods ---------- '''
@@ -122,9 +137,13 @@ def random_split_run():
 ''' ---------- new node testing methods ---------- '''
 
 def new_node_run():
+    '''
+    new_node_run - function to run with test cases where every tree creates a
+        new node
+    '''
     fv_col = 'Do you have any previous experience with programming?'
     fv_2_col = 'previous_programming_experience'
-    df_lbl_dict = {'pets':(pet_df[pet_df['size'] != 'enormous'], 'iscat'), 
+    df_lbl_dict = {'pets':(pet_df[pet_df['size'] != 'enormous'], 'iscat'),
                    'five_day':(fv_day_df[fv_day_df[fv_col] != 'Nope'], 'cats or dogs'),
                    'five_day_2':(fv_day_2nd_df[fv_day_2nd_df[fv_2_col] != 'Nope'], 'cats_or_dogs'),
                    'mushroom':(mushroom_df[mushroom_df['odor'] != 'p'], 'class')}
@@ -134,28 +153,28 @@ def new_node_run():
     test_res = {'initial':{},
                 'updated':{},
                 'remade':{}}
-    
+
     for ttl, tpl in df_lbl_dict.items():
         df, cls = tpl
         trn, trn2, tst = random_split_data(df, .6, .2, .2)
         if ttl == 'pets':
             trn2.append(pet_df[pet_df['size'] == 'enormous'])
             tst.append(pet_df[pet_df['size'] == 'enormous'])
-            
+
         elif ttl == 'five_day':
             targ_col = 'Do you have any previous experience with programming?'
             trn2.append(fv_day_df[fv_day_df[targ_col] == 'Nope'].iloc[:14])
             tst.append(fv_day_df[fv_day_df[targ_col] == 'Nope'].iloc[14:])
-            
+
         elif ttl == 'five_day_2':
             targ_col = 'previous_programming_experience'
             trn2.append(fv_day_2nd_df[fv_day_2nd_df[targ_col] == 'Nope'].iloc[:17])
             tst.append(fv_day_2nd_df[fv_day_2nd_df[targ_col] == 'Nope'].iloc[17:])
-            
+
         elif ttl == 'mushroom':
             trn2.append(mushroom_df[mushroom_df['odor'] == 'p'].iloc[:128])
             tst.append(mushroom_df[mushroom_df['odor'] == 'p'].iloc[128:])
-            
+
         attrs = df.columns.tolist()
         attrs.remove(cls)
 
@@ -191,7 +210,7 @@ def new_node_run():
         # test it against metrics
         a, r, p, f = metric_test(recreated_tree, tst)
         test_res['remade'][ttl] = [a, r, p, f]
-    
+
     return time_dict, test_res
 
 ''' ---------- end new node testing methods ---------- '''
@@ -200,9 +219,13 @@ def new_node_run():
 ''' ---------- new data testing methods ---------- '''
 
 def new_data_run():
+    '''
+    new_data_run - function for testing when data is added, but no new nodes
+        are constructed.
+    '''
     fv_col = 'Do you have any previous experience with programming?'
     fv_2_col = 'previous_programming_experience'
-    df_lbl_dict = {'pets':(pet_df[pet_df['size'] != 'enormous'], 'iscat'), 
+    df_lbl_dict = {'pets':(pet_df[pet_df['size'] != 'enormous'], 'iscat'),
                    'five_day':(fv_day_df[fv_day_df[fv_col] != 'Nope'], 'cats or dogs'),
                    'five_day_2':(fv_day_2nd_df[fv_day_2nd_df[fv_2_col] != 'Nope'], 'cats_or_dogs'),
                    'mushroom':(mushroom_df[mushroom_df['odor'] != 'p'], 'class')}
@@ -212,7 +235,7 @@ def new_data_run():
     test_res = {'initial':{},
                 'updated':{},
                 'remade':{}}
-    
+
     for ttl, tpl in df_lbl_dict.items():
         df, cls = tpl
         trn, trn2, tst = random_split_data(df, .6, .2, .2)
@@ -220,24 +243,24 @@ def new_data_run():
             trn.append(pet_df[pet_df['size'] == 'enormous'])
             trn2.append(pet_df[pet_df['size'] == 'enormous'])
             tst.append(pet_df[pet_df['size'] == 'enormous'])
-            
+
         elif ttl == 'five_day':
             targ_col = 'Do you have any previous experience with programming?'
             trn.append(fv_day_df[fv_day_df[targ_col] == 'Nope'].iloc[:9])
             trn2.append(fv_day_df[fv_day_df[targ_col] == 'Nope'].iloc[9:18])
             tst.append(fv_day_df[fv_day_df[targ_col] == 'Nope'].iloc[18:])
-            
+
         elif ttl == 'five_day_2':
             targ_col = 'previous_programming_experience'
             trn.append(fv_day_2nd_df[fv_day_2nd_df[targ_col] == 'Nope'].iloc[:11])
             trn2.append(fv_day_2nd_df[fv_day_2nd_df[targ_col] == 'Nope'].iloc[11:22])
             tst.append(fv_day_2nd_df[fv_day_2nd_df[targ_col] == 'Nope'].iloc[22:])
-            
+
         elif ttl == 'mushroom':
             trn.append(mushroom_df[mushroom_df['odor'] == 'p'].iloc[:85])
             trn2.append(mushroom_df[mushroom_df['odor'] == 'p'].iloc[85:170])
             tst.append(mushroom_df[mushroom_df['odor'] == 'p'].iloc[170:])
-            
+
         attrs = df.columns.tolist()
         attrs.remove(cls)
 
@@ -273,7 +296,7 @@ def new_data_run():
         # test it against metrics
         a, r, p, f = metric_test(recreated_tree, tst)
         test_res['remade'][ttl] = [a, r, p, f]
-    
+
     return time_dict, test_res
 
 ''' ---------- end new data testing methods ---------- '''
