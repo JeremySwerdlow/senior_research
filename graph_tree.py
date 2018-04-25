@@ -29,9 +29,11 @@ class color_handler:
     @staticmethod
     def font_color(bg_hex):
         rgb = [int(bg_hex[x:x + 2], 16) for x in [1, 3, 5]]
-        for c in rgb:
+        for i in range(len(rgb)):
+            c = rgb[i]
             c = c / 255
             c = c / 12.92 if c <= 0.03928 else ((c+0.055)/1.055) ** 2.4
+            rgb[i] = c
         r, g, b = rgb[0], rgb[1], rgb[2]
         L = 0.2126 * r + 0.7152 * g + 0.0722 * b
         color = '#000000' if L > 0.179 else '#ffffff'
